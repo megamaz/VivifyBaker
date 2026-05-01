@@ -1,15 +1,21 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace VivifyBaker.Baker.Scripts.Editor.Utility
 {
-    public class Point<T>
+    public struct Point<T>
     {
-        private T _values;
-        private float _time;
-        [CanBeNull] private string _easing;
+        public T _values;
+        public float _time;
+        [CanBeNull] public string _easing;
+
+        public string ToString()
+        {
+            return _values.ToString();
+        }
     }
-    public class PointDefinition<T>
+    public struct PointDefinition<T>
     {
-        private Point<T>[] _points;
+        public Point<T>[] Points;
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace VivifyBaker.Baker.Scripts.Editor.Utility
 {
-    public interface IBaker
+    public interface IBakerResult
     {
-        IBakerResult[] Bake();
+        
     }
 }
