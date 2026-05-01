@@ -4,16 +4,10 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using VivifyBaker.Baker.Scripts.Editor.Utility;
+using VivifyBaker.Baker.Scripts.Constants;
 
 namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
 {
-    public enum PropertyType
-    {
-        Float,
-        Color,
-        Vector,
-        Unknown
-    }
     public class BakedMaterialProperty<T>
     {
         public string ID;
