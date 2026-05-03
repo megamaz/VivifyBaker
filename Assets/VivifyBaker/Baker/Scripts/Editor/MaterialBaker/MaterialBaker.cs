@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 using VivifyBaker.Baker.Scripts.Editor.Utility;
@@ -72,13 +73,15 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             
             PointDefinition<Vector4> points = new PointDefinition<Vector4>();
             List<Point<Vector4>> points_list = new List<Point<Vector4>>();
+            points_list.Add(new Point<Vector4>(0, Vector4.zero));
             // there's probably a better way of doing this
             string indexes = type == "Color" ? "rgba" : "xyzw";
             string x = indexes.ElementAt(0).ToString();
             string y = indexes.ElementAt(1).ToString();
             string z = indexes.ElementAt(2).ToString();
             string w = indexes.ElementAt(3).ToString();
-            for (int f = 0; f < frame_count; f++)
+            bool was_pulled = false;
+            for (int f = 0; f <= frame_count; f++)
             {
                 float value_x = AnimationSampler.GetPropertyValueAtFrame(_settings.Clip,
                     $"material.{propertyName}.{x}", _settings.ObjectName, typeof(MeshRenderer), f);
@@ -90,10 +93,22 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
                     $"material.{propertyName}.{w}", _settings.ObjectName, typeof(MeshRenderer), f);
                 Vector4 values = new Vector4(value_x, value_y, value_z, value_w);
                 float time = (float)f / (float)frame_count;
-                Point<Vector4> new_point = new Point<Vector4>();
-                new_point._values = values;
-                new_point._time = time;
-                points_list.Add(new_point);
+                Point<Vector4> new_point = new Point<Vector4>(time, values);
+                // update last point to current point if they have the same value
+                if (points_list[points_list.Count - 1]._values == new_point._values)
+                {
+                    if (!was_pulled)
+                    {
+                        points_list.Add(new_point);
+                        was_pulled = true;
+                    }
+                    points_list[points_list.Count - 1] = new_point;
+                }
+                else
+                {
+                    was_pulled = false;
+                    points_list.Add(new_point);
+                }
             }
             points.Points = points_list.ToArray();
             baked_properties.Points = points;
@@ -106,16 +121,35 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             BakedMaterialProperty<float> baked_properties = new BakedMaterialProperty<float>();
             baked_properties.ID = propertyName;
             baked_properties.Type = "Float";
+            
             PointDefinition<float> points = new PointDefinition<float>();
             List<Point<float>> points_list = new List<Point<float>>();
-            for (int f = 0; f < frame_count; f++)
+            points_list.Add(new Point<float>(0, 0));
+            
+            // keeps track of whether or not the previous point was pulled along.
+            // if it wasn't and we're preparing to pull, then we create a copy of the point to pull before pulling.
+            // this is to prevent linear stretching
+            bool was_pulled = false;  
+            for (int f = 0; f <= frame_count; f++)
             {
-                float value = AnimationSampler.GetPropertyValueAtFrame(_settings.Clip, propertyName, _settings.ObjectName, typeof(MeshRenderer), f);
+                float value = AnimationSampler.GetPropertyValueAtFrame(_settings.Clip, $"material.{propertyName}", _settings.ObjectName, typeof(MeshRenderer), f);
                 float time = (float)f / (float)frame_count;
-                Point<float> new_point = new Point<float>();
-                new_point._values = value;
-                new_point._time = time;
-                points_list.Add(new_point);
+                Point<float> new_point = new Point<float>(time, value);
+                // update last point to current point if they have the same value
+                if (points_list[points_list.Count - 1]._values == new_point._values)
+                {
+                    if (!was_pulled)
+                    {
+                        points_list.Add(new_point);
+                        was_pulled = true;
+                    }
+                    points_list[points_list.Count - 1] = new_point;
+                }
+                else
+                {
+                    was_pulled = false;
+                    points_list.Add(new_point);
+                }
             }
             points.Points = points_list.ToArray();
             baked_properties.Points = points;

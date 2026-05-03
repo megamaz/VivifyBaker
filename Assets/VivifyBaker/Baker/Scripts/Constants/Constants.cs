@@ -4,7 +4,6 @@
     {
         Float,
         Color,
-        Vector,
-        Unknown
+        Vector
     }
 }
