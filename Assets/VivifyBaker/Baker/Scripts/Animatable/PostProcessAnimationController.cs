@@ -15,6 +15,7 @@ namespace VivifyBaker.Baker.Scripts.Animatable
         // let the user decide which camera to apply this to
         public Camera postProcessingCamera; 
         
+        
         public bool scene_view_enabled = false;
         
         private CommandBuffer cmd;

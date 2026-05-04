@@ -598,7 +598,7 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _LaceAmount: 4.22
-    - _LaceScale: 71.82
+    - _LaceScale: 0.3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
