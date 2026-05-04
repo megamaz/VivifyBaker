@@ -59,7 +59,7 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             EditorGUILayout.Space(20);
             GUIMaterialProperties();
             EditorGUILayout.Space(20);
-            GUIExportProperties();
+            // GUIExportProperties(); // will always sample once per animation frame anyways, since I can't sample between frames.
             
             GUILayout.EndVertical();
             GUILayout.Space(10);
@@ -69,11 +69,11 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             GUIGetPropertyNames();
             
             // test stuff
-            // _time = EditorGUILayout.FloatField("Test Time", _time);
-            // if (GUILayout.Button("Fetch Property At Frame"))
-            // {
-            //     Debug.Log(AnimationSampler.GetPropertyValueAtFrame(_settings.Clip, $"material.{_settings.PropertyNames[0]}", _settings.ObjectName, typeof(MeshRenderer), (int)_time));
-            // }
+            _time = EditorGUILayout.FloatField("Test Time", _time);
+            if (GUILayout.Button("Fetch Property At Frame"))
+            {
+                Debug.Log(AnimationSampler.GetPropertyValueAtFrame(_settings.Clip, $"material.{_settings.PropertyNames[0]}", _settings.ObjectName, typeof(MeshRenderer), (int)_time));
+            }
             
             GUIUtilities.GUIBake(() => GUIHandleBakeResult());
         }
@@ -160,8 +160,6 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
                     {"values", properties.ToArray()}
                 } }
             };
-            Debug.Log(event_data.Keys.ToString());
-            Debug.Log(event_data["b"]);
             
             JsonSerializer serializer = JsonSerializer.Create();
             string path = EditorUtility.SaveFilePanel("Save Bake Result", ".", $"bake_{_settings.MaterialName}.json", ".json");
