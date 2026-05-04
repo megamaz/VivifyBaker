@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace VivifyBaker.Baker.Scripts.Editor.Utility
 {
@@ -20,9 +19,34 @@ namespace VivifyBaker.Baker.Scripts.Editor.Utility
             return new Point<T>(this._time, this._values);
         }
         
-        public string ToString()
+        public new string ToString()
         {
             return _values.ToString();
+        }
+
+        public static bool operator ==(Point<T> a, Point<T> b)
+        {
+            return a.Equals(b);
+        }
+        
+        public static bool operator !=(Point<T> a, Point<T> b)
+        {
+            return !(a==b);
+        }
+        
+        public override bool Equals(object obj)
+        {
+            if (obj is Point<T> other)
+            {
+                return _time == other._time && _values.Equals(other._values);  
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
     public struct PointDefinition<T>

@@ -160,8 +160,6 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
                     {"values", properties.ToArray()}
                 } }
             };
-            Debug.Log(event_data.Keys.ToString());
-            Debug.Log(event_data["b"]);
             
             JsonSerializer serializer = JsonSerializer.Create();
             string path = EditorUtility.SaveFilePanel("Save Bake Result", ".", $"bake_{_settings.MaterialName}.json", ".json");

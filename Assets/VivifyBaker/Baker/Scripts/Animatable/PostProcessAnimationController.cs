@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
-using VivifyBaker.Baker.Scripts.Constants;
-using UnityEditor.SceneManagement;
 
 namespace VivifyBaker.Baker.Scripts.Animatable
 {
+    [ExecuteInEditMode]
     public class PostProcessAnimationController : MonoBehaviour
     {
         private static readonly int mainTexID = Shader.PropertyToID("_MainTex");
@@ -22,13 +18,15 @@ namespace VivifyBaker.Baker.Scripts.Animatable
         public bool scene_view_enabled = false;
         
         private CommandBuffer cmd;
-        public AnimatablePostProcessLayer[]  postProcessLayers;
+        // public AnimatablePostProcessLayer[]  postProcessLayers;
         
         #if UNITY_EDITOR
         void OnValidate() => RenderPostProcess(this.enabled);
         #endif
         
+        #if !UNITY_EDITOR // only wanna run late_update when in play mode
         void LateUpdate() => RenderPostProcess(this.enabled);
+        #endif
         
         void OnDisable() => RenderPostProcess(false);
 
@@ -77,25 +75,25 @@ namespace VivifyBaker.Baker.Scripts.Animatable
             RenderTargetIdentifier target = new RenderTargetIdentifier(mainTexID);
             
             cmd.GetTemporaryRT(mainTexID, -1, -1, 24, FilterMode.Bilinear, RenderTextureFormat.ARGB64);
-            foreach (var post_process in postProcessLayers)
+            foreach (var post_process in GetComponentsInChildren<AnimatablePostProcessLayer>())
             {
                 if(post_process == null || post_process.material == null)
                     continue;
                 if (post_process.material.HasProperty(mainTexID))
                 {
-                    // apply modifications
-                    // use the local copy since we don't want to write to disk every frame
-                    foreach (var property_change in post_process.animatedProperties)
-                    {
-                        if(property_change.propertyType == PropertyType.Color)
-                            post_process.localCopy.SetColor(property_change.PropertyName, property_change.color_value);
-                        if(property_change.propertyType == PropertyType.Float)
-                            post_process.localCopy.SetFloat(property_change.PropertyName, property_change.float_value);
-                        if(property_change.propertyType == PropertyType.Vector)
-                            post_process.localCopy.SetVector(property_change.PropertyName, new Vector4(property_change.x, property_change.y, property_change.z, property_change.w));
-                    }
+                    // // apply modifications
+                    // // use the local copy since we don't want to write to disk every frame
+                    // foreach (var property_change in post_process.)
+                    // {
+                    //     if(property_change.propertyType == PropertyType.Color)
+                    //         post_process.localCopy.SetColor(property_change.PropertyName, property_change.color_value);
+                    //     if(property_change.propertyType == PropertyType.Float)
+                    //         post_process.localCopy.SetFloat(property_change.PropertyName, property_change.float_value);
+                    //     if(property_change.propertyType == PropertyType.Vector)
+                    //         post_process.localCopy.SetVector(property_change.PropertyName, new Vector4(property_change.x, property_change.y, property_change.z, property_change.w));
+                    // }
                     cmd.Blit(source, target);
-                    cmd.Blit(target, destination, post_process.localCopy);
+                    cmd.Blit(target, destination, post_process.localCopy, post_process.pass < 0 ? -1 : post_process.pass);
                 }
             }
             cmd.ReleaseTemporaryRT(mainTexID);
@@ -111,6 +109,17 @@ namespace VivifyBaker.Baker.Scripts.Animatable
                 }
             }
             #endif
+        }
+        
+        public void AddLayer()
+        {
+            GameObject new_layer = new GameObject($"Post Process Layer {transform.childCount+1}");
+            new_layer.transform.SetParent(transform);
+            
+            new_layer.AddComponent<SkinnedMeshRenderer>();
+            new_layer.AddComponent<AnimatablePostProcessLayer>();
+            
+            Selection.activeGameObject = new_layer;
         }
     }
 }
