@@ -37,8 +37,12 @@ You are now set to begin animating! Unity will have created a material dropdown 
 4. Filling out the output properties:
    1. Use the "Get Properties" button to find the object paths (this will be logged to the console) and the name of the properties. 
       - For Vector-like properties (such as Color and Vector), do not animate the `.x`, `.y` or `.r`, `.g`, etc properties individually - just set the property name as a whole.
-   2. "Material Name" will be the output of the Vivify Event material name.
+   2. "Material Name" will be the output of the Vivify Event material name (the full path to the target material asset).
       - It does not technically need to match the actual material name.
    3. "Object Name" will be the object path logged to the console. Fill it out exactly for each layer.
    4. "Property Names" will be the name of each property as they appear in your shader file / in the console.
 5. Hit "Bake" and choose where you want to save the resulting bake.
+
+## Known Issues
+- Previewing An Animation does not preview the post-process.
+- WIP: Conflict with [VivifyTemplate](https://github.com/Swifter1243/VivifyTemplate) `Newtonsoft.Json.dll`. I am working with Swifter to resolve this. For now, VivifyBaker relies on [VivifyTemplate](https://github.com/Swifter1243/VivifyTemplate) being included in your project.

@@ -89,7 +89,7 @@
                 float rowIndex = dot(uv, perpDir);
                 float quantizedRow = floor(rowIndex * _LaceScale) / _LaceScale;
             
-                float offset = ((i.uv.y % _LaceScale) - 0.5) * 2.0 * _LaceAmount / 100;
+                float offset = (sin(quantizedRow*56456) - 0.5) * 2.0 * _LaceAmount / 100;
             
                 uv += dir * offset;
                 

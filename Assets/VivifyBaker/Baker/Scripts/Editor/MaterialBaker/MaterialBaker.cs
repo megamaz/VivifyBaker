@@ -73,7 +73,6 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             
             PointDefinition<Vector4> points = new PointDefinition<Vector4>();
             List<Point<Vector4>> points_list = new List<Point<Vector4>>();
-            points_list.Add(new Point<Vector4>(0, Vector4.zero));
             // there's probably a better way of doing this
             string indexes = type == "Color" ? "rgba" : "xyzw";
             string x = indexes.ElementAt(0).ToString();
@@ -95,7 +94,7 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
                 float time = (float)f / (float)frame_count;
                 Point<Vector4> new_point = new Point<Vector4>(time, values);
                 // update last point to current point if they have the same value
-                if (points_list[points_list.Count - 1]._values == new_point._values)
+                if (points_list.Count > 0 && points_list[points_list.Count - 1]._values == new_point._values)
                 {
                     if (!was_pulled)
                     {
@@ -124,7 +123,6 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             
             PointDefinition<float> points = new PointDefinition<float>();
             List<Point<float>> points_list = new List<Point<float>>();
-            points_list.Add(new Point<float>(0, 0));
             
             // keeps track of whether or not the previous point was pulled along.
             // if it wasn't and we're preparing to pull, then we create a copy of the point to pull before pulling.
@@ -136,7 +134,7 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
                 float time = (float)f / (float)frame_count;
                 Point<float> new_point = new Point<float>(time, value);
                 // update last point to current point if they have the same value
-                if (points_list[points_list.Count - 1]._values == new_point._values)
+                if (points_list.Count > 0 && points_list[points_list.Count - 1]._values == new_point._values)
                 {
                     if (!was_pulled)
                     {

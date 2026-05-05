@@ -157,7 +157,7 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
                 {"d", new Dictionary<string, object>{
                     {"asset",  _settings.MaterialName},
                     {"duration", (_settings.BPM / 60) * _settings.Clip.length},
-                    {"values", properties.ToArray()}
+                    {"properties", properties.ToArray()}
                 } }
             };
             

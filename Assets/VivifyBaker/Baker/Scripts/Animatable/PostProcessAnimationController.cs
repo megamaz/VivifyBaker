@@ -82,17 +82,6 @@ namespace VivifyBaker.Baker.Scripts.Animatable
                     continue;
                 if (post_process.material.HasProperty(mainTexID))
                 {
-                    // // apply modifications
-                    // // use the local copy since we don't want to write to disk every frame
-                    // foreach (var property_change in post_process.)
-                    // {
-                    //     if(property_change.propertyType == PropertyType.Color)
-                    //         post_process.localCopy.SetColor(property_change.PropertyName, property_change.color_value);
-                    //     if(property_change.propertyType == PropertyType.Float)
-                    //         post_process.localCopy.SetFloat(property_change.PropertyName, property_change.float_value);
-                    //     if(property_change.propertyType == PropertyType.Vector)
-                    //         post_process.localCopy.SetVector(property_change.PropertyName, new Vector4(property_change.x, property_change.y, property_change.z, property_change.w));
-                    // }
                     cmd.Blit(source, target);
                     cmd.Blit(target, destination, post_process.localCopy, post_process.pass < 0 ? -1 : post_process.pass);
                 }
