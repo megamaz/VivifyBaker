@@ -1,11 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace VivifyBaker.Baker.Scripts.Animatable
 {
-    [ExecuteInEditMode]
+    [ExecuteAlways]
     public class PostProcessAnimationController : MonoBehaviour
     {
         private static readonly int mainTexID = Shader.PropertyToID("_MainTex");
@@ -19,15 +20,13 @@ namespace VivifyBaker.Baker.Scripts.Animatable
         public bool scene_view_enabled = false;
         
         private CommandBuffer cmd;
-        // public AnimatablePostProcessLayer[]  postProcessLayers;
         
         #if UNITY_EDITOR
         void OnValidate() => RenderPostProcess(this.enabled);
         #endif
         
-        #if !UNITY_EDITOR // only wanna run late_update when in play mode
         void LateUpdate() => RenderPostProcess(this.enabled);
-        #endif
+        
         
         void OnDisable() => RenderPostProcess(false);
 
@@ -82,8 +81,17 @@ namespace VivifyBaker.Baker.Scripts.Animatable
                     continue;
                 if (post_process.material.HasProperty(mainTexID))
                 {
+                    MeshRenderer mr = post_process.GetComponent<MeshRenderer>();
+                    Material rendermat = mr.sharedMaterial;
+                    if (AnimationMode.InAnimationMode())
+                    {
+                        rendermat = new Material(mr.sharedMaterial.shader);
+                        MaterialPropertyBlock block = new MaterialPropertyBlock();
+                        mr.GetPropertyBlock(block);
+                        CopyAnimatedProperties(block, rendermat);
+                    }
                     cmd.Blit(source, target);
-                    cmd.Blit(target, destination, post_process.localCopy, post_process.pass < 0 ? -1 : post_process.pass);
+                    cmd.Blit(target, destination, rendermat, post_process.pass < 0 ? -1 : post_process.pass);
                 }
             }
             cmd.ReleaseTemporaryRT(mainTexID);
@@ -101,12 +109,43 @@ namespace VivifyBaker.Baker.Scripts.Animatable
             #endif
         }
         
+        void CopyAnimatedProperties(MaterialPropertyBlock block, Material dst)
+        {
+            // they should have the same shader so it shouldn't matter if i use dst or src
+            Shader shader = dst.shader;
+
+            int count = shader.GetPropertyCount();
+
+            for (int i = 0; i < count; i++)
+            {
+                int id = shader.GetPropertyNameId(i);
+                switch (shader.GetPropertyType(i))
+                {
+                    case ShaderPropertyType.Float:
+                    case ShaderPropertyType.Range:
+                        dst.SetFloat(id, block.GetFloat(id));
+                        break;
+                    case ShaderPropertyType.Color:
+                        dst.SetColor(id, block.GetColor(id));
+                        break;
+                    case ShaderPropertyType.Vector:
+                        dst.SetVector(id, block.GetVector(id));
+                        break;
+                    case ShaderPropertyType.Texture:
+                        dst.SetTexture(id, block.GetTexture(id));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        
         public void AddLayer()
         {
             GameObject new_layer = new GameObject($"Post Process Layer {transform.childCount+1}");
             new_layer.transform.SetParent(transform);
             
-            new_layer.AddComponent<SkinnedMeshRenderer>();
+            new_layer.AddComponent<MeshRenderer>();
             new_layer.AddComponent<AnimatablePostProcessLayer>();
             
             Selection.activeGameObject = new_layer;
