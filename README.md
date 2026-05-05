@@ -44,5 +44,4 @@ You are now set to begin animating! Unity will have created a material dropdown 
 5. Hit "Bake" and choose where you want to save the resulting bake.
 
 ## Known Issues
-- Previewing An Animation does not preview the post-process.
 - WIP: Conflict with [VivifyTemplate](https://github.com/Swifter1243/VivifyTemplate) `Newtonsoft.Json.dll`. I am working with Swifter to resolve this. For now, VivifyBaker relies on [VivifyTemplate](https://github.com/Swifter1243/VivifyTemplate) being included in your project.
