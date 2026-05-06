@@ -83,6 +83,7 @@ namespace VivifyBaker.Baker.Scripts.Animatable
                 {
                     MeshRenderer mr = post_process.GetComponent<MeshRenderer>();
                     Material rendermat = mr.sharedMaterial;
+                    #if UNITY_EDITOR
                     if (AnimationMode.InAnimationMode())
                     {
                         rendermat = new Material(mr.sharedMaterial.shader);
@@ -90,6 +91,7 @@ namespace VivifyBaker.Baker.Scripts.Animatable
                         mr.GetPropertyBlock(block);
                         CopyAnimatedProperties(block, rendermat);
                     }
+                    #endif
                     cmd.Blit(source, target);
                     cmd.Blit(target, destination, rendermat, post_process.pass < 0 ? -1 : post_process.pass);
                 }
@@ -140,6 +142,7 @@ namespace VivifyBaker.Baker.Scripts.Animatable
             }
         }
         
+        #if UNITY_EDITOR
         public void AddLayer()
         {
             GameObject new_layer = new GameObject($"Post Process Layer {transform.childCount+1}");
@@ -150,5 +153,6 @@ namespace VivifyBaker.Baker.Scripts.Animatable
             
             Selection.activeGameObject = new_layer;
         }
+        #endif
     }
 }
