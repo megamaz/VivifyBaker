@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
-using VivifyBaker.Baker.Scripts.Editor.Utility;
+using VivifyBaker.Baker.Scripts.Utility;
 using VivifyBaker.Baker.Scripts.Constants;
 
-namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
+namespace VivifyBaker.Baker.Scripts.Bakers.MaterialBaker
 {
     public class BakedMaterialProperty<T>
     {
@@ -20,10 +20,60 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
     {
         private MaterialBakeSettings _settings;
 
-        public static object[] GetBakeResults(MaterialBakeSettings settings)
+        public static Dictionary<string, object> GetBakeResults(MaterialBakeSettings settings)
         {
             MaterialBaker baker = new MaterialBaker(settings);
-            return baker.Bake();
+            object[] bake_result = baker.Bake();
+            List<Dictionary<string, object>> properties = new List<Dictionary<string, object>>();
+
+            foreach (object bake in bake_result)
+            {
+                if (bake.GetType() == typeof(BakedMaterialProperty<float>))
+                {
+                    var data = (BakedMaterialProperty<float>)bake;
+                    Dictionary<string, object> new_property = new Dictionary<string, object>
+                    {
+                        { "id", data.ID },
+                        { "type", data.Type }
+                    };
+                    List<float[]> points = new List<float[]>();
+                    foreach (Point<float> p in data.Points.Points)
+                    {
+                        points.Add(new float[]{p._values, p._time});
+                    }
+                    new_property.Add("value",  points.ToArray());
+                    properties.Add(new_property);
+                }
+
+                if (bake.GetType() == typeof(BakedMaterialProperty<Vector4>))
+                {
+                    var data = (BakedMaterialProperty<Vector4>)bake;
+                    Dictionary<string, object> new_property = new Dictionary<string, object>
+                    {
+                        { "id", data.ID },
+                        { "type", data.Type }
+                    };
+                    List<float[]> points = new List<float[]>();
+                    foreach (Point<Vector4> p in data.Points.Points)
+                    {
+                        points.Add(new float[]{p._values.x, p._values.y, p._values.z, p._values.w, p._time});
+                    }
+                    new_property.Add("value",  points.ToArray());
+                    properties.Add(new_property);
+                }
+            }   
+            Dictionary<string, object> event_data = new Dictionary<string, object>
+            {
+                {"b", settings.StartBeatOffset},
+                {"t", "SetMaterialProperty"},
+                {"d", new Dictionary<string, object>{
+                    {"asset",  settings.MaterialName},
+                    {"duration", (settings.BPM / 60) * settings.Clip.length},
+                    {"properties", properties.ToArray()}
+                } }
+            };
+
+            return event_data;
         }
         
         private MaterialBaker(MaterialBakeSettings settings)

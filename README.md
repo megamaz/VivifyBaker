@@ -28,20 +28,11 @@ This assumes that you already have an object with an Animator on it, but haven't
 You are now set to begin animating! Unity will have created a material dropdown at the bottom of the inspector, within which you can directly animate your material. VivifyBaker will apply that material as post-process.
 
 ### Baking your animation
-1. Open the baking Window
-
-![image](./RepoAssets/Images/open_bake.png)
-
-2. Drag the `.anim` file into the Animation slot
-3. Fill out your BPM andStart Beat Offset
-4. Filling out the output properties:
-   1. Use the "Get Properties" button to find the object paths (this will be logged to the console) and the name of the properties. 
-      - For Vector-like properties (such as Color and Vector), do not animate the `.x`, `.y` or `.r`, `.g`, etc properties individually - just set the property name as a whole.
-   2. "Material Name" will be the output of the Vivify Event material name (the full path to the target material asset).
-      - It does not technically need to match the actual material name.
-   3. "Object Name" will be the object path logged to the console. Fill it out exactly for each layer.
-   4. "Property Names" will be the name of each property as they appear in your shader file / in the console.
-5. Hit "Bake" and choose where you want to save the resulting bake.
+1. Select your post process layer object
+2. Add a "Material Baker Component" Component to it.
+3. Fill out your BPM and start offset.
+4. Select the properties you wish to bake in the properties dropdown.
+5. Hit "Bake", and select where you wish to save the bake.
 
 ## Known Issues
 - WIP: Conflict with [VivifyTemplate](https://github.com/Swifter1243/VivifyTemplate) `Newtonsoft.Json.dll`. I am working with Swifter to resolve this. For now, VivifyBaker relies on [VivifyTemplate](https://github.com/Swifter1243/VivifyTemplate) being included in your project.

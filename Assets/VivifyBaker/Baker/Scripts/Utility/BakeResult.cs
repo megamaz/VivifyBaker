@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VivifyBaker.Baker.Scripts.Editor.Utility
+namespace VivifyBaker.Baker.Scripts.Utility
 {
     public enum EventType // I will add more to this as I add more bakers
     {

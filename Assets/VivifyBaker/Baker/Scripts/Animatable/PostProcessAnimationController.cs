@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using VivifyBaker.Baker.Scripts.Bakers.Components;
 
 namespace VivifyBaker.Baker.Scripts.Animatable
 {
@@ -150,6 +151,7 @@ namespace VivifyBaker.Baker.Scripts.Animatable
             
             new_layer.AddComponent<MeshRenderer>();
             new_layer.AddComponent<AnimatablePostProcessLayer>();
+            new_layer.AddComponent<MaterialBakerComponent>();
             
             Selection.activeGameObject = new_layer;
         }
