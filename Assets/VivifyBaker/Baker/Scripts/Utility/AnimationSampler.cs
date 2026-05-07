@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace VivifyBaker.Baker.Scripts.Editor.Utility
+namespace VivifyBaker.Baker.Scripts.Utility
 {
     public static class AnimationSampler
     {

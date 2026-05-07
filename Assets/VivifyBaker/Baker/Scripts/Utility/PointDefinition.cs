@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace VivifyBaker.Baker.Scripts.Editor.Utility
+namespace VivifyBaker.Baker.Scripts.Utility
 {
     public class Point<T>
     {

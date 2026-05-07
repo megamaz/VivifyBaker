@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
-using VivifyBaker.Baker.Scripts.Editor.Utility;
+using VivifyBaker.Baker.Scripts.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
+namespace VivifyBaker.Baker.Scripts.Bakers.MaterialBaker
 {
     public class MaterialBakerWindow : EditorWindow
     {
@@ -69,11 +69,11 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             GUIGetPropertyNames();
             
             // test stuff
-            _time = EditorGUILayout.FloatField("Test Time", _time);
-            if (GUILayout.Button("Fetch Property At Frame"))
-            {
-                Debug.Log(AnimationSampler.GetPropertyValueAtFrame(_settings.Clip, $"material.{_settings.PropertyNames[0]}", _settings.ObjectName, typeof(MeshRenderer), (int)_time));
-            }
+            // _time = EditorGUILayout.FloatField("Test Time", _time);
+            // if (GUILayout.Button("Fetch Property At Frame"))
+            // {
+            //     Debug.Log(AnimationSampler.GetPropertyValueAtFrame(_settings.Clip, $"material.{_settings.PropertyNames[0]}", _settings.ObjectName, typeof(MeshRenderer), (int)_time));
+            // }
             
             GUIUtilities.GUIBake(() => GUIHandleBakeResult());
         }
@@ -99,70 +99,16 @@ namespace VivifyBaker.Baker.Scripts.Editor.MaterialBaker
             _settings.PropertyNames = StringArrayField("Property Names", ref _isPropertyNamesOpened, _settings.PropertyNames);
         }
 
-        private void GUIExportProperties()
-        {
-            EditorGUILayout.LabelField("Export Properties", _labelStyle);
-            _settings.SamplesPerSecond = EditorGUILayout.IntField("Samples per Second", _settings.SamplesPerSecond);
-        }
-
         /// <summary>
         /// Takes the bake result and prompts you to save it.
         /// Saves a json file of a singular vivify event containing the baked data.
         /// </summary>
         private void GUIHandleBakeResult()
         {
-            object[] bake_result = MaterialBaker.GetBakeResults(_settings);
-            List<Dictionary<string, object>> properties = new List<Dictionary<string, object>>();
-
-            foreach (object bake in bake_result)
-            {
-                if (bake.GetType() == typeof(BakedMaterialProperty<float>))
-                {
-                    var data = (BakedMaterialProperty<float>)bake;
-                    Dictionary<string, object> new_property = new Dictionary<string, object>
-                    {
-                        { "id", data.ID },
-                        { "type", data.Type }
-                    };
-                    List<float[]> points = new List<float[]>();
-                    foreach (Point<float> p in data.Points.Points)
-                    {
-                        points.Add(new float[]{p._values, p._time});
-                    }
-                    new_property.Add("value",  points.ToArray());
-                    properties.Add(new_property);
-                }
-
-                if (bake.GetType() == typeof(BakedMaterialProperty<Vector4>))
-                {
-                    var data = (BakedMaterialProperty<Vector4>)bake;
-                    Dictionary<string, object> new_property = new Dictionary<string, object>
-                    {
-                        { "id", data.ID },
-                        { "type", data.Type }
-                    };
-                    List<float[]> points = new List<float[]>();
-                    foreach (Point<Vector4> p in data.Points.Points)
-                    {
-                        points.Add(new float[]{p._values.x, p._values.y, p._values.z, p._values.w, p._time});
-                    }
-                    new_property.Add("value",  points.ToArray());
-                    properties.Add(new_property);
-                }
-            }   
-            Dictionary<string, object> event_data = new Dictionary<string, object>
-            {
-                {"b", _settings.StartBeatOffset},
-                {"t", "SetMaterialProperty"},
-                {"d", new Dictionary<string, object>{
-                    {"asset",  _settings.MaterialName},
-                    {"duration", (_settings.BPM / 60) * _settings.Clip.length},
-                    {"properties", properties.ToArray()}
-                } }
-            };
+            Dictionary<string, object> event_data = MaterialBaker.GetBakeResults(_settings); 
             
             JsonSerializer serializer = JsonSerializer.Create();
-            string path = EditorUtility.SaveFilePanel("Save Bake Result", ".", $"bake_{_settings.MaterialName}.json", ".json");
+            string path = EditorUtility.SaveFilePanel("Save Bake Result", ".", $"bake_{_settings.Clip.name}.json", ".json");
             using (StreamWriter writer = new StreamWriter(path, false))
             {
                 serializer.Serialize(writer, event_data);
