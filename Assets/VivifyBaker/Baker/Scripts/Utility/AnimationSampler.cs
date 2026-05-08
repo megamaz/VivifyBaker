@@ -7,6 +7,8 @@ namespace VivifyBaker.Baker.Scripts.Utility
     {
         public static float GetPropertyValueAtFrame(AnimationClip clip, string propertyName, string relativePath, System.Type componentType, int frame)
         {
+            // does not work when outside Unity Editor, causing errors on VivifyTemplate build.
+            #if UNITY_EDITOR
             float time = frame / clip.frameRate;
 
             EditorCurveBinding binding = EditorCurveBinding.FloatCurve(relativePath, componentType, propertyName);
@@ -16,6 +18,10 @@ namespace VivifyBaker.Baker.Scripts.Utility
                 return 0f;
 
             return curve.Evaluate(time);
+            
+            #else
+            return 0;
+            #endif
         }
     }
 }

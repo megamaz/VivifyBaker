@@ -3,9 +3,9 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
-using VivifyBaker.Baker.Scripts.Bakers.Components;
+using VivifyBaker.Baker.Scripts.Components.Bakers.MaterialBaker;
 
-namespace VivifyBaker.Baker.Scripts.Animatable
+namespace VivifyBaker.Baker.Scripts.Components.Animatable
 {
     [ExecuteAlways]
     public class PostProcessAnimationController : MonoBehaviour

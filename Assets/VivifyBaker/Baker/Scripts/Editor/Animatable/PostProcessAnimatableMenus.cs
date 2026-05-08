@@ -1,12 +1,11 @@
-﻿using System.Runtime.InteropServices;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-using VivifyBaker.Baker.Scripts.Animatable;
+using VivifyBaker.Baker.Scripts.Components.Animatable;
 
 namespace VivifyBaker.Baker.Scripts.Editor.Animatable
 {
     [CustomEditor(typeof(PostProcessAnimationController))]
-    public class PostProcesAnimationControllerDraw : UnityEditor.Editor
+    public class PostProcessAnimationControllerDraw : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
