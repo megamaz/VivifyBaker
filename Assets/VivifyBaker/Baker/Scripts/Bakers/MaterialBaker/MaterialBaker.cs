@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UnityEditor;
 using UnityEngine;
 using VivifyBaker.Baker.Scripts.Utility;
@@ -206,6 +204,7 @@ namespace VivifyBaker.Baker.Scripts.Bakers.MaterialBaker
         
         private PropertyType? ResolvePropertyType(string propertyName)
         {
+            #if UNITY_EDITOR // I hate you Unity
             // vector / color bindings have 4 parameters, we'll check for RGBA and XYZW in the end of each string to tell which is which.
             // Everything else is just float.
             EditorCurveBinding[] bindings = AnimationUtility.GetCurveBindings(_settings.Clip);
@@ -222,6 +221,9 @@ namespace VivifyBaker.Baker.Scripts.Bakers.MaterialBaker
                     return PropertyType.Vector;
             }
             return PropertyType.Float;
+            #else
+            return null; // grrrr
+            #endif
         }
     }
 }

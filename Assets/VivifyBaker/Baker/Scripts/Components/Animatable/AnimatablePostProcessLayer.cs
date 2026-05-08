@@ -1,10 +1,8 @@
 ﻿using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
-using VivifyBaker.Baker.Scripts.Constants;
 
-namespace VivifyBaker.Baker.Scripts.Animatable
+namespace VivifyBaker.Baker.Scripts.Components.Animatable
 {
     [Serializable] [ExecuteInEditMode] [RequireComponent(typeof(MeshRenderer))]
     public class AnimatablePostProcessLayer : MonoBehaviour
